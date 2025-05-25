@@ -21,6 +21,9 @@ class AssetSummary:
     max_drawdown: float
     performance: float
 
+    def to_dict(self):
+        return dataclasses.asdict(self)
+
 
 def summarize_fluctuations(fluctuations: pd.DataFrame) -> AssetSummary:
     """Calculate historical metrics for fluctuations."""
@@ -31,7 +34,7 @@ def summarize_fluctuations(fluctuations: pd.DataFrame) -> AssetSummary:
     )
 
 
-def summarize_asset(isin: str) -> dict[str, AssetSummary]:
+def summarize_asset(isin: str) -> dict[str, dict[str, float]]:
     """Calculate historical metrics for an asset."""
 
     today_date = datetime.today()
@@ -45,21 +48,21 @@ def summarize_asset(isin: str) -> dict[str, AssetSummary]:
             fluctuations=dataframe[
                 dataframe["date"] > today_date - timedelta(days=365 * 3)
             ]
-        ),
+        ).to_dict(),
         "1 year": summarize_fluctuations(
             fluctuations=dataframe[dataframe["date"] > today_date - timedelta(days=365)]
-        ),
+        ).to_dict(),
         "3 months": summarize_fluctuations(
             fluctuations=dataframe[
                 dataframe["date"] > today_date - timedelta(days=30 * 3)
             ]
-        ),
+        ).to_dict(),
         "this year": summarize_fluctuations(
             fluctuations=dataframe[
                 dataframe["date"]
                 > datetime(year=today_date.date().year, month=1, day=1)
             ]
-        ),
+        ).to_dict(),
     }
 
     return historical_metrics
