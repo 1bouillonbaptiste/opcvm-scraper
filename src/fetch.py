@@ -10,6 +10,17 @@ import requests
 import pandas as pd
 
 
+def send_request(url: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Send a GET request to the given url."""
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, params=params, headers=headers)
+    try:
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        raise Exception(f"Error requesting data: {e}")
+
+
 def get_symbol_from_isin(isin: str) -> str:
     """Fetch the symbol from the ISIN."""
     search_url = "https://query2.finance.yahoo.com/v1/finance/search"
@@ -21,19 +32,12 @@ def get_symbol_from_isin(isin: str) -> str:
         "quotesQueryId": "tss_match_phrase_query",
     }
 
-    headers = {"User-Agent": "Mozilla/5.0"}
+    data = send_request(search_url, search_params)
 
-    try:
-        response = requests.get(search_url, params=search_params, headers=headers)  # pyright: ignore
-        response.raise_for_status()
-        response_data: dict[str, Any] = response.json()
-    except requests.RequestException as e:
-        raise Exception(f"Error fetching symbol from ISIN: {e}")
-
-    if not response_data.get("quotes"):
+    if not data.get("quotes"):
         raise ValueError(f"No symbol found for ISIN: {isin}")
 
-    symbol = response_data["quotes"][0]["symbol"]
+    symbol = data["quotes"][0]["symbol"]
 
     return symbol
 
@@ -49,15 +53,9 @@ def fetch_historical_data(
         "interval": "1d",
         "events": "history",
     }
-    headers = {"User-Agent": "Mozilla/5.0"}
-    try:
-        response = requests.get(hist_url, params=params, headers=headers)
-        response.raise_for_status()
-        response_data: dict[str, Any] = response.json()
-    except requests.RequestException as e:
-        raise Exception(f"Error fetching historical data: {e}")
+    data = send_request(hist_url, params)
 
-    raw_data = response_data.get("chart", {}).get("result", [])
+    raw_data = data.get("chart", {}).get("result", [])
 
     if not raw_data:
         start_date_str = start_date.strftime("%Y-%m-%d")
@@ -71,12 +69,12 @@ def fetch_historical_data(
 
     dataframe = pd.DataFrame(
         {
-            "Date": timestamps,
-            "Open": quote_data.get("open", []),
-            "High": quote_data.get("high", []),
-            "Low": quote_data.get("low", []),
-            "Close": quote_data.get("close", []),
-            "Volume": quote_data.get("volume", []),
+            "date": timestamps,
+            "open": quote_data.get("open", []),
+            "high": quote_data.get("high", []),
+            "low": quote_data.get("low", []),
+            "close": quote_data.get("close", []),
+            "volume": quote_data.get("volume", []),
         }
     )
 
