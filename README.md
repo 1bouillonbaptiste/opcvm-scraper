@@ -55,3 +55,5 @@ The **performance** is the total return from the starting date.
 Under the hood, we scrap historical data from Yahoo Finance.
 
 The lowest available timeframe for old data is daily, which is enough for this project.
+
+It is not possible to specify a custom date range for now. Could be added with little effort, though.
