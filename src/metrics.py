@@ -9,10 +9,12 @@ def calculate_max_drawdown(fluctuations: pd.DataFrame) -> float:
 
     highs = fluctuations["high"].tolist()
     lows = fluctuations["low"].tolist()
-    drawdown = [
-        np.max(highs[: ii + 1]) - lows[ii] for ii in range(1, len(fluctuations))
-    ]
-    return round(float(np.max(drawdown)), 3)
+    drawdowns = []
+    for index in range(len(fluctuations)):
+        highest_high = max(highs[: index + 1])
+        drawdown = (highest_high - lows[index]) / highest_high
+        drawdowns.append(drawdown)
+    return round(float(np.max(drawdowns)), 3)
 
 
 def calculate_volatility(fluctuations: pd.DataFrame) -> float:
