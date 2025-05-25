@@ -1,0 +1,22 @@
+{
+    "3 years": {
+        "volatility": 0.011,
+        "max_drawdown": 0.239,
+        "performance": 0.077
+    },
+    "1 year": {
+        "volatility": 0.011,
+        "max_drawdown": 0.239,
+        "performance": 0.061
+    },
+    "3 months": {
+        "volatility": 0.018,
+        "max_drawdown": 0.224,
+        "performance": -0.067
+    },
+    "this year": {
+        "volatility": 0.015,
+        "max_drawdown": 0.239,
+        "performance": -0.069
+    }
+}
