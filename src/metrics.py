@@ -7,9 +7,10 @@ def calculate_max_drawdown(fluctuations: pd.DataFrame) -> float:
     if len(fluctuations) < 2:
         raise ValueError("Not enough data to calculate drawdown.")
 
+    highs = fluctuations["high"].tolist()
+    lows = fluctuations["low"].tolist()
     drawdown = [
-        np.max(fluctuations["high"][: ii + 1]) - fluctuations["low"][ii]
-        for ii in range(1, len(fluctuations))
+        np.max(highs[: ii + 1]) - lows[ii] for ii in range(1, len(fluctuations))
     ]
     return round(float(np.max(drawdown)), 3)
 
@@ -21,3 +22,14 @@ def calculate_volatility(fluctuations: pd.DataFrame) -> float:
 
     returns = fluctuations["close"].pct_change()
     return round(float(returns.std()), 3)
+
+
+def calculate_performance(fluctuations: pd.DataFrame) -> float:
+    """Calculate the performance of market data."""
+    if len(fluctuations) < 2:
+        raise ValueError("Not enough data to calculate performance.")
+
+    closes = fluctuations["close"].tolist()
+    last_close = closes[-1]
+    first_close = closes[0]
+    return round(float((last_close - first_close) / first_close), 3)
