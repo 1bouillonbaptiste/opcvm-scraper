@@ -17,6 +17,7 @@ packages = [
 pandas = "^2.2.3"
 requests = "^2.32.3"
 types-requests = "^2.32.0.20250515"
+pandas-stubs = "^2.2.3.250308"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
