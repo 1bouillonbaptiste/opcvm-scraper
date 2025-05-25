@@ -1,7 +1,7 @@
 import pandas as pd
 from pytest_cases import parametrize_with_cases
 
-from src.metrics import calculate_max_drawdown
+from src.metrics import calculate_max_drawdown, calculate_volatility
 
 
 class CalculateMaxDrawdownCases:
@@ -39,3 +39,9 @@ class CalculateMaxDrawdownCases:
 def test_calculate_max_drawdown(fluctuations, expected_max_drawdown):
     maw_drawdown = calculate_max_drawdown(fluctuations)
     assert maw_drawdown == expected_max_drawdown
+
+
+def test_calculate_volatility():
+    fluctuations = pd.DataFrame({"close": [1, 2, 3, 2, 1]})
+    volatility = calculate_volatility(fluctuations)
+    assert volatility == 0.707
